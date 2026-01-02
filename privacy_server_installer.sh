@@ -770,7 +770,7 @@ EODOVEMBOX
 
 echo 'pop3_uidl_format = %v-%u' > /etc/dovecot/conf.d/20-pop3.conf
 
-openssl dhparam -out /etc/dovecot/dh.pem 4096
+openssl dhparam -out /etc/dovecot/dh.pem 2048
 
 systemctl enable postfix dovecot saslauthd
 systemctl start postfix dovecot saslauthd
