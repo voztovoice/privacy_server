@@ -818,14 +818,11 @@ NC_DB_PASSWORD=$(openssl rand -base64 24)
 echo "export NC_DB_PASSWORD='$NC_DB_PASSWORD'" >> "$CONFIG_FILE"
 
 mysql -u root <<EOSQL
-UPDATE mysql.user SET Password=PASSWORD('$MASTER_PASSWORD') WHERE User='root';
-DELETE FROM mysql.user WHERE User='';
-DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+ALTER USER 'root'@'localhost' IDENTIFIED BY '$MASTER_PASSWORD';
+DELETE FROM mysql.global_priv WHERE User='';
+DELETE FROM mysql.global_priv WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
 DROP DATABASE IF EXISTS test;
 DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
-CREATE DATABASE IF NOT EXISTS nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-CREATE USER 'ncuser'@'localhost' IDENTIFIED BY '$NC_DB_PASSWORD';
-GRANT ALL PRIVILEGES ON nextcloud.* TO 'ncuser'@'localhost';
 FLUSH PRIVILEGES;
 EOSQL
 
