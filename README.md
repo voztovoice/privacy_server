@@ -63,13 +63,11 @@ _matrix._tcp.tudominio.com  IN  SRV  10 0 8448 tudominio.com.
 
 ```bash
 # Como root
-cd /root
+cd /usr/src
 
 # Descargar scripts
-wget https://tu-repo/privacy_server_installer.sh
-wget https://tu-repo/create_user.sh
-
-# O subir vía SCP/SFTP
+git clone https://github.com/voztovoice/privacy_server.git
+cd privacy_server
 
 # Hacer ejecutables
 chmod +x privacy_server_installer.sh
