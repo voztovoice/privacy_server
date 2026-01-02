@@ -897,7 +897,7 @@ log_info "Instalando Nextcloud..."
 sudo -u apache php /var/www/nextcloud/occ maintenance:install \
     --database "mysql" \
     --database-name "nextcloud" \
-    --database-host "127.0.0.1" \
+    --database-host "localhost" \
     --database-user "ncuser" \
     --database-pass "$NC_DB_PASSWORD" \
     --admin-user "admin" \
