@@ -244,9 +244,9 @@ else
         fi
         
         # Copiar archivo VPN
-        cp "$VPN_FILE" "$USER_DATA_DIR/VPN_Config.ovpn"
-        chown apache:apache "$USER_DATA_DIR/VPN_Config.ovpn"
-        chmod 644 "$USER_DATA_DIR/VPN_Config.ovpn"
+        cp "$VPN_FILE" "$USER_DATA_DIR/VPN_$USERNAME.ovpn"
+        chown apache:apache "$USER_DATA_DIR/VPN_$USERNAME.ovpn"
+        chmod 644 "$USER_DATA_DIR/VPN_$USERNAME.ovpn"
         
         # Actualizar cache de Nextcloud
         sudo -u apache php /var/www/nextcloud/occ files:scan "$USERNAME" >/dev/null 2>&1
