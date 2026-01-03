@@ -617,7 +617,7 @@ EOTRUSTED
 
 mkdir -p /etc/opendkim/keys/$DOMAIN
 opendkim-genkey -b 2048 -d $DOMAIN -D /etc/opendkim/keys/$DOMAIN -s default -v
-chown -R opendkim:opendkim /etc/opendkim/keys/
+chown -R opendkim:opendkim /etc/opendkim/
 
 # Guardar clave DKIM pública
 DKIM_PUBLIC=$(cat /etc/opendkim/keys/$DOMAIN/default.txt | grep -oP 'p=\K[^"]+')
