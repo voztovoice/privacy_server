@@ -623,6 +623,27 @@ chown -R opendkim:opendkim /etc/opendkim/keys/
 DKIM_PUBLIC=$(cat /etc/opendkim/keys/$DOMAIN/default.txt | grep -oP 'p=\K[^"]+')
 echo "export DKIM_PUBLIC='$DKIM_PUBLIC'" >> "$CONFIG_FILE"
 
+# Guardar clave DKIM pública
+DKIM_PUBLIC=$(cat /etc/opendkim/keys/$DOMAIN/default.txt | grep -oP 'p=\K[^"]+')
+echo "export DKIM_PUBLIC='$DKIM_PUBLIC'" >> "$CONFIG_FILE"
+
+# MOSTRAR EN PANTALLA LA CLAVE DKIM
+echo ""
+echo -e "${YELLOW}╔════════════════════════════════════════════════════════════╗${NC}"
+echo -e "${YELLOW}║  IMPORTANTE: CONFIGURAR REGISTRO DNS DKIM AHORA           ║${NC}"
+echo -e "${YELLOW}╔════════════════════════════════════════════════════════════╗${NC}"
+echo ""
+echo -e "${GREEN}Añade este registro TXT a tu DNS:${NC}"
+echo ""
+cat /etc/opendkim/keys/$DOMAIN/default.txt
+echo ""
+echo -e "${YELLOW}O en formato simple:${NC}"
+echo ""
+echo "default._domainkey.$DOMAIN IN TXT \"v=DKIM1; k=rsa; p=$DKIM_PUBLIC\""
+echo ""
+read -p "Presiona Enter cuando hayas configurado el DNS DKIM..."
+echo ""
+
 systemctl enable opendkim
 systemctl start opendkim
 
