@@ -958,7 +958,7 @@ if getenforce | grep -q "Enforcing\|Permissive"; then
 fi
 
 sudo -u apache php /var/www/nextcloud/occ app:install calendar
-sudo -u apache php /var/www/nextcloud/occ app:install conctacts
+sudo -u apache php /var/www/nextcloud/occ app:install contacts
 sudo -u apache php /var/www/nextcloud/occ app:install mail
 sudo -u apache php /var/www/nextcloud/occ db:add-missing-indices
 
