@@ -223,7 +223,7 @@ else
     fi
 
     # Configurar email del usuario
-    sudo -u apache php /var/www/nextcloud/occ user:setting "$USERNAME" settings email "$USER_EMAIL"
+    sudo -u apache php /var/www/nextcloud/occ user:setting "$USERNAME" settings email "$USERNAME@$DOMAIN"
 
     log_info ". Usuario Nextcloud creado"
     
@@ -366,7 +366,7 @@ log_info "Enviando email con credenciales a $USER_EMAIL..."
 (
 echo "From: postmaster@$DOMAIN"
 echo "To: $USER_EMAIL"
-echo "Subject: Bienvenido a $DOMAIN - Tus Credenciales"
+echo "Subject: Bienvenido a tu servidor de privacidad $DOMAIN - Tus Credenciales"
 echo "Content-Type: text/html; charset=UTF-8"
 echo ""
 cat << EOHTML
@@ -435,7 +435,6 @@ cat << EOHTML
         • Thunderbird (Windows, Mac, Linux)<br>
         • Apple Mail (Mac, iOS)<br>
         • K-9 Mail (Android)<br>
-        • Outlook (Windows, Mac)
     </div>
     
     <h2>☁️ Nextcloud (Almacenamiento en la Nube)</h2>
