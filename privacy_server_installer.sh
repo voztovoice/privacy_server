@@ -1028,6 +1028,7 @@ cat > /etc/synapse/homeserver.yaml <<EOSYNAPSE
 server_name: "$DOMAIN"
 pid_file: /run/synapse/homeserver.pid
 public_baseurl: "https://$DOMAIN:8448"
+report_stats: false
 
 listeners:
   - port: 8448
