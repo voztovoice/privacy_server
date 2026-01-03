@@ -826,6 +826,16 @@ DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
 FLUSH PRIVILEGES;
 EOSQL
 
+# Crear base de datos y usuario Nextcloud
+mysql -u root -p"$MASTER_PASSWORD" <<EOSQL
+CREATE DATABASE IF NOT EXISTS nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE USER IF NOT EXISTS 'ncuser'@'localhost' IDENTIFIED BY '$NC_DB_PASSWORD';
+GRANT ALL PRIVILEGES ON nextcloud.* TO 'ncuser'@'localhost';
+FLUSH PRIVILEGES;
+EOSQL
+
+log_info "Base de datos y usuario Nextcloud creados"
+
 log_info "Descargando Nextcloud..."
 cd /var/www
 wget -q "https://download.nextcloud.com/server/releases/latest.zip" -O nextcloud.zip
