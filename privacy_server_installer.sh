@@ -1031,6 +1031,15 @@ public_baseurl: "https://$DOMAIN:8448"
 report_stats: false
 
 listeners:
+  - port: 8008
+    tls: false
+    type: http
+    x_forwarded: true
+    bind_addresses: ['127.0.0.1']
+    resources:
+      - names: [client]
+        compress: false
+
   - port: 8448
     tls: true
     type: http
@@ -1068,6 +1077,8 @@ signing_key_path: "/etc/synapse/$DOMAIN.signing.key"
 
 trusted_key_servers:
   - server_name: "matrix.org"
+
+suppress_key_server_warning: true
 EOSYNAPSE
 
 cat > /etc/synapse/log.config <<EOLOG
@@ -1125,12 +1136,13 @@ Description=Matrix Synapse Homeserver
 After=network.target
 
 [Service]
-Type=notify
+Type=simple
 User=synapse
 Group=synapse
 WorkingDirectory=/etc/synapse
-ExecStart=/usr/local/bin/python3 -m synapse.app.homeserver --config-path=/etc/synapse/homeserver.yaml
+ExecStart=/usr/bin/python3 -m synapse.app.homeserver --config-path=/etc/synapse/homeserver.yaml
 Restart=on-failure
+RestartSec=10
 RuntimeDirectory=synapse
 
 [Install]
