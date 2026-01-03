@@ -1010,7 +1010,7 @@ dnf install -y python3 python3-pip python3-devel \
     gcc libffi-devel openssl-devel
 
 pip3 install --upgrade pip
-pip3 install matrix-synapse
+pip3 install --ignore-installed matrix-synapse
 
 useradd -r -s /bin/false synapse 2>/dev/null || true
 
