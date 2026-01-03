@@ -807,7 +807,7 @@ dnf install -y httpd mod_ssl
 dnf install -y php php-fpm php-common php-gmp php-curl php-intl \
     php-pdo php-mbstring php-gd php-xml php-cli php-zip \
     php-mysqli php-process php-pecl-apcu php-pecl-imagick \
-    php-bcmath php-opcache php-json php-ldap
+    php-bcmath php-opcache php-json php-ldap php-sodium
 
 log_info "Configurando PHP..."
 cp /etc/php.ini /etc/php.ini.backup
@@ -817,12 +817,11 @@ sed -i 's/upload_max_filesize = .*/upload_max_filesize = 200M/' /etc/php.ini
 sed -i 's/post_max_size = .*/post_max_size = 200M/' /etc/php.ini
 sed -i 's/max_execution_time = .*/max_execution_time = 360/' /etc/php.ini
 sed -i "s|;date.timezone =.*|date.timezone = $TIMEZONE|" /etc/php.ini
-sed -i 's/;opcache.enable=.*/opcache.enable=1/' /etc/php.ini
-sed -i 's/;opcache.memory_consumption=.*/opcache.memory_consumption=128/' /etc/php.ini
-sed -i 's/;opcache.interned_strings_buffer=.*/opcache.interned_strings_buffer=8/' /etc/php.ini
-sed -i 's/;opcache.max_accelerated_files=.*/opcache.max_accelerated_files=10000/' /etc/php.ini
-sed -i 's/;opcache.revalidate_freq=.*/opcache.revalidate_freq=1/' /etc/php.ini
-sed -i 's/;opcache.save_comments=.*/opcache.save_comments=1/' /etc/php.ini
+sed -i 's/;opcache\.memory_consumption=128/opcache.memory_consumption=128/' /etc/php.d/10-opcache.ini
+sed -i 's/^;opcache\.interned_strings_buffer=8/opcache.interned_strings_buffer=32/' /etc/php.d/10-opcache.ini
+sed -i 's/;opcache\.max_accelerated_files=10000/opcache.max_accelerated_files=10000/' /etc/php.d/10-opcache.ini
+sed -i 's/;opcache\.revalidate_freq=2/opcache.revalidate_freq=1/' /etc/php.d/10-opcache.ini
+sed -i 's/;opcache\.save_comments=1/opcache.save_comments=1/' /etc/php.d/10-opcache.ini
 
 cat > /etc/php.d/40-apcu.ini << 'EOF'
 extension=apcu.so
@@ -943,6 +942,8 @@ sudo -u apache php /var/www/nextcloud/occ config:system:set trusted_domains 1 --
 sudo -u apache php /var/www/nextcloud/occ config:system:set trusted_domains 2 --value="$PRIMARY_IP"
 sudo -u apache php /var/www/nextcloud/occ config:system:set default_phone_region --value="CO"
 sudo -u apache php /var/www/nextcloud/occ config:system:set memcache.local --value="\\OC\\Memcache\\APCu"
+sudo -u apache php /var/www/nextcloud/occ config:system:set maintenance_window_start --value="2"
+
 
 echo "*/15 * * * * php -f /var/www/nextcloud/cron.php" | crontab -u apache -
 sudo -u apache php /var/www/nextcloud/occ background:cron
@@ -955,6 +956,11 @@ if getenforce | grep -q "Enforcing\|Permissive"; then
     setsebool -P httpd_can_network_connect on 2>/dev/null || true
     setsebool -P httpd_can_sendmail on 2>/dev/null || true
 fi
+
+sudo -u apache php /var/www/nextcloud/occ app:install calendar
+sudo -u apache php /var/www/nextcloud/occ app:install conctacts
+sudo -u apache php /var/www/nextcloud/occ app:install mail
+sudo -u apache php /var/www/nextcloud/occ db:add-missing-indices
 
 log_info "Nextcloud instalado correctamente"
 
