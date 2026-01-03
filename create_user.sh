@@ -449,8 +449,9 @@ cat << EOHTML
     <ul>
         <li>📁 Tu espacio de almacenamiento personal</li>
         <li>🔐 Archivo <code>VPN_Config.ovpn</code> para conectarte a la VPN</li>
-        <li>📅 Calendario (instala la app Calendar)</li>
-        <li>👥 Contactos (instala la app Contacts)</li>
+        <li>📅 Calendario</li>
+        <li>👥 Contactos</li>
+        <li>✉️ Correo</li>
     </ul>
     
     <h2>💬 Matrix (Mensajería Segura)</h2>
