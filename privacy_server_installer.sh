@@ -444,7 +444,7 @@ set_var EASYRSA_REQ_CITY "SantaMarta"
 set_var EASYRSA_REQ_ORG "$ORG_NAME"
 set_var EASYRSA_REQ_EMAIL "$ADMIN_EMAIL"
 set_var EASYRSA_REQ_OU "$ORG_NAME"
-set_var EASYRSA_KEY_SIZE 2048
+set_var EASYRSA_KEY_SIZE 4096
 set_var EASYRSA_ALGO rsa
 set_var EASYRSA_CA_EXPIRE 7500
 set_var EASYRSA_CERT_EXPIRE 365
@@ -715,7 +715,7 @@ mailbox_size_limit = 0
 
 EOMAIN
 
-openssl dhparam -out /etc/postfix/dhparams.pem 2048
+openssl dhparam -out /etc/postfix/dhparams.pem 4096
 
 gpasswd -a postfix opendkim
 
@@ -789,7 +789,7 @@ EODOVEMBOX
 
 echo 'pop3_uidl_format = %v-%u' > /etc/dovecot/conf.d/20-pop3.conf
 
-openssl dhparam -out /etc/dovecot/dh.pem 2048
+openssl dhparam -out /etc/dovecot/dh.pem 4096
 
 systemctl enable postfix dovecot saslauthd
 systemctl start postfix dovecot saslauthd
@@ -1009,7 +1009,7 @@ no-tlsv1
 no-tlsv1_1
 EOTURN
 
-openssl dhparam -dsaparam -out /etc/coturn/dhp.pem 2048
+openssl dhparam -dsaparam -out /etc/coturn/dhp.pem 4096
 
 mkdir -p /var/log/coturn
 chown coturn:coturn /var/log/coturn
