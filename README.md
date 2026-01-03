@@ -63,6 +63,7 @@ _matrix._tcp.tudominio.com  IN  SRV  10 0 8448 tudominio.com.
 
 ```bash
 # Como root
+dnf -y install git
 cd /usr/src
 
 # Descargar scripts
