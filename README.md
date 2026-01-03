@@ -9,7 +9,7 @@ Solución completa de servidor de privacidad que instala y configura automática
 - ✅ **OpenVPN** - VPN con autenticación PAM
 - ✅ **Servidor Email** - Postfix + Dovecot + OpenDKIM + SpamAssassin
 - ✅ **Nextcloud** - Almacenamiento en la nube y colaboración
-- ✅ **Matrix Synapse** - Mensajería federada segura
+- ✅ **Matrix Synapse** - Mensajería instantánea federada segura
 - ✅ **Coturn** - TURN/STUN server para WebRTC
 
 ### Automatización Completa
@@ -112,7 +112,7 @@ _dmarc.tudominio.com    IN  TXT     "v=DMARC1; p=quarantine; rua=mailto:postmast
 # Probar SSH en puerto 12999 desde otra terminal
 ssh -p 12999 root@tu-servidor
 
-# Si funciona, reiniciar sshd en la sesión original
+# Si no funciona, reiniciar sshd en la sesión original
 systemctl restart sshd
 ```
 
@@ -181,22 +181,10 @@ El script creará el usuario en todos los servicios y enviará un email con las 
 - **Contraseña**: (contraseña maestra generada)
 - **Datos**: /home/data
 
-**Apps recomendadas:**
-```bash
-sudo -u apache php /var/www/nextcloud/occ app:install calendar
-sudo -u apache php /var/www/nextcloud/occ app:install contacts
-sudo -u apache php /var/www/nextcloud/occ app:install mail
-```
-
 ### Matrix Synapse
 - **Homeserver**: https://tudominio.com:8448
 - **Usuario admin**: @admin:tudominio.com
 - **Cliente recomendado**: Element (https://element.io)
-
-**Crear usuarios adicionales:**
-```bash
-register_new_matrix_user -c /etc/synapse/homeserver.yaml
-```
 
 ## 📧 Emails Automáticos
 
@@ -283,7 +271,7 @@ register_new_matrix_user -c /etc/synapse/homeserver.yaml
 
 ### Recomendaciones Post-Instalación
 
-**1. Cambiar contraseña maestra**
+**1. Cambiar contraseña maestra (opcional)**
 ```bash
 # MySQL
 mysqladmin -u root -p password 'nueva_contraseña'
@@ -459,15 +447,6 @@ tail -f /var/log/synapse/homeserver.log | grep -i federation
 - SPF: https://mxtoolbox.com/spf.aspx
 - Matrix Federation: https://federationtester.matrix.org
 
-## 📝 Notas
-
-### Diferencias con el Documento Original
-- ✅ **Sin dependencia de expect** - Usa EASYRSA_BATCH
-- ✅ **SSH solo root** - No crea usuarios admin con acceso SSH
-- ✅ **Puerto SSH customizado** - 12999 en lugar de 2152
-- ✅ **Email automatizado** - Envío automático de credenciales
-- ✅ **Archivo VPN en Nextcloud** - Copiado automáticamente a cada usuario
-
 ### Compatibilidad
 - AlmaLinux 10
 - PHP 8.x
@@ -482,5 +461,5 @@ GPL-3.0
 ---
 
 **Versión:** 2.0  
-**Fecha:** 2026-01-02  
+**Fecha:** 2026-01-03  
 **Autor:** Privacy Server Project
