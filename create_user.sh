@@ -66,33 +66,46 @@ cat << "EOF"
 ╚═══════════════════════════════════════════════════════════╝
 EOF
 echo ""
+sleep 0.5
 
 #==========================================
 # SOLICITAR DATOS DEL USUARIO
 #==========================================
-while true; do
-    read -p "Nombre de usuario (solo letras minúsculas y números): " USERNAME
-    USERNAME=$(echo "$USERNAME" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]')
+set +e  # Desactiva exit on error
+
+echo ""  # Línea en blanco
+echo "=== CREAR NUEVO USUARIO ===" 
+echo ""
+
+USERNAME=""
+while [[ -z "$USERNAME" ]]; do
+    read -p "Nombre de usuario (solo letras minúsculas y números): " input_username
+    USERNAME=$(echo "$input_username" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]')
     
     if [[ -z "$USERNAME" ]]; then
-        log_error "El nombre de usuario no puede estar vacío"
-    fi
-    
-    # Verificar si el usuario ya existe
-    if id "$USERNAME" &>/dev/null; then
-        log_warn "El usuario $USERNAME ya existe en el sistema"
-        read -p "¿Deseas continuar de todas formas? (y/n): " continue_existing
-        [[ "$continue_existing" != "y" ]] && continue
+        log_warn "El nombre de usuario no puede estar vacío"
+        continue
     fi
     
     # Validar longitud
     if [[ ${#USERNAME} -lt 3 ]]; then
         log_warn "El nombre de usuario debe tener al menos 3 caracteres"
+        USERNAME=""
         continue
     fi
     
-    break
+    # Verificar si el usuario ya existe
+    if id "$USERNAME" >/dev/null 2>&1; then
+        log_warn "El usuario $USERNAME ya existe en el sistema"
+        read -p "¿Deseas continuar de todas formas? (y/n): " continue_existing
+        if [[ "$continue_existing" != "y" ]]; then
+            USERNAME=""
+            continue
+        fi
+    fi
 done
+
+set -e
 
 read -p "Email personal del usuario (para recibir credenciales): " USER_EMAIL
 [[ -z "$USER_EMAIL" ]] && log_error "El email es obligatorio"
@@ -186,29 +199,33 @@ log_info "✓ Buzón de correo configurado"
 #==========================================
 log_info "Creando usuario en Nextcloud..."
 
-# Verificar que Nextcloud esté instalado
+# Verificar que Nextcloud estï¿½ instalado
 if [[ ! -f /var/www/nextcloud/occ ]]; then
     log_warn "Nextcloud no encontrado, saltando..."
 else
     # Verificar si usuario ya existe
     if sudo -u apache php /var/www/nextcloud/occ user:info "$USERNAME" &>/dev/null; then
-        log_warn "Usuario Nextcloud ya existe, reseteando contraseña..."
-        export OC_PASS="$USER_PASSWORD"
-        sudo -u apache php /var/www/nextcloud/occ user:resetpassword --password-from-env "$USERNAME"
+        log_warn "Usuario Nextcloud ya existe, reseteando contraseï¿½a..."
+        sudo -u apache OC_PASS="$USER_PASSWORD" php /var/www/nextcloud/occ user:resetpassword --password-from-env "$USERNAME"
     else
         # Crear usuario
-        export OC_PASS="$USER_PASSWORD"
-        sudo -u apache php /var/www/nextcloud/occ user:add \
+        sudo -u apache OC_PASS="$USER_PASSWORD" php /var/www/nextcloud/occ user:add \
             --password-from-env \
             --display-name="$USERNAME" \
             --group="users" \
-            "$USERNAME" 2>/dev/null
+            "$USERNAME" 2>/dev/null || {
+            log_warn "Error creando usuario Nextcloud, intentando sin grupo..."
+            sudo -u apache OC_PASS="$USER_PASSWORD" php /var/www/nextcloud/occ user:add \
+                --password-from-env \
+                --display-name="$USERNAME" \
+                "$USERNAME"
+        }
     fi
-    
+
     # Configurar email del usuario
     sudo -u apache php /var/www/nextcloud/occ user:setting "$USERNAME" settings email "$USER_EMAIL"
-    
-    log_info "✓ Usuario Nextcloud creado"
+
+    log_info ". Usuario Nextcloud creado"
     
     # Copiar archivo VPN a la carpeta del usuario en Nextcloud
     log_info "Copiando archivo de configuración VPN a Nextcloud..."
