@@ -240,7 +240,7 @@ dnf install -y \
     chrony \
     iptables-services \
     policycoreutils-python-utils \
-    openssl tar unzip \
+    openssl tar unzip sqlite \
     expect
 
 log_info "Configurando zona horaria..."
