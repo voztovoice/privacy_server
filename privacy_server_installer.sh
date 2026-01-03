@@ -713,8 +713,6 @@ mailbox_command = /usr/bin/procmail -a "\$EXTENSION"
 message_size_limit = 204800000
 mailbox_size_limit = 0
 
-alias_maps = hash:/etc/aliases
-alias_database = hash:/etc/aliases
 EOMAIN
 
 openssl dhparam -out /etc/postfix/dhparams.pem 2048
@@ -826,7 +824,12 @@ sed -i 's/;opcache.max_accelerated_files=.*/opcache.max_accelerated_files=10000/
 sed -i 's/;opcache.revalidate_freq=.*/opcache.revalidate_freq=1/' /etc/php.ini
 sed -i 's/;opcache.save_comments=.*/opcache.save_comments=1/' /etc/php.ini
 
-echo 'apc.enable_cli=1' > /etc/php.d/40-apcu.ini
+cat > /etc/php.d/40-apcu.ini << 'EOF'
+extension=apcu.so
+apc.enabled=1
+apc.shm_size=32M
+apc.enable_cli=1
+EOF
 
 log_info "Instalando MariaDB..."
 dnf install -y mariadb-server mariadb
