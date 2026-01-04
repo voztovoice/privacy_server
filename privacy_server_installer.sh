@@ -1410,7 +1410,7 @@ read -p "¿Crear primer usuario? (y/n): " create_first_user
 
 if [[ "$create_first_user" == "y" ]]; then
     if [[ -f "./create_user.sh" ]]; then
-        bash ./create_user.sh
+        bash /usr/src/privacy_server/create_user.sh
     else
         log_warn "Archivo create_user.sh no encontrado en el directorio actual"
         log_info "Puedes crearlo manualmente después"
