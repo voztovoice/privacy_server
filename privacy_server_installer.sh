@@ -1326,19 +1326,7 @@ cat << EOHTML
             <td style="padding: 10px; border: 1px solid #ddd;">https://$DOMAIN:8448</td>
         </tr>
     </table>
-    
-    <h2 style="color: #2c3e50; margin-top: 30px;">📧 Configuración Email</h2>
-    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-        <tr style="background: #ecf0f1;">
-            <td style="padding: 10px; border: 1px solid #ddd;"><strong>IMAP</strong></td>
-            <td style="padding: 10px; border: 1px solid #ddd;">mail.$DOMAIN:993 (SSL/TLS)</td>
-        </tr>
-        <tr>
-            <td style="padding: 10px; border: 1px solid #ddd;"><strong>SMTP</strong></td>
-            <td style="padding: 10px; border: 1px solid #ddd;">mail.$DOMAIN:587 (STARTTLS)</td>
-        </tr>
-    </table>
-    
+        
     <h2 style="color: #e67e22; margin-top: 30px;">⚠️ TAREAS PENDIENTES</h2>
     <ol style="line-height: 2; background: #fff3cd; padding: 20px; border-radius: 5px;">
         <li><strong>Configurar DNS:</strong> Revisar archivo de credenciales para registros completos</li>
