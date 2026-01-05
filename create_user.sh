@@ -448,7 +448,7 @@ cat << EOHTML
     <p><strong>En Nextcloud encontrarás:</strong></p>
     <ul>
         <li>📁 Tu espacio de almacenamiento personal</li>
-        <li>🔐 Archivo <code>VPN_Config.ovpn</code> para conectarte a la VPN</li>
+        <li>🔐 Archivo <code>VPN_$USERNAME.ovpn</code> para conectarte a la VPN</li>
         <li>📅 Calendario</li>
         <li>👥 Contactos</li>
         <li>✉️ Correo</li>
@@ -480,7 +480,7 @@ cat << EOHTML
     <p><strong>Cómo conectarte a la VPN:</strong></p>
     <ol>
         <li>Accede a Nextcloud: <a href="https://cloud.$DOMAIN">https://cloud.$DOMAIN</a></li>
-        <li>Descarga el archivo <code>VPN_Config.ovpn</code></li>
+        <li>Descarga el archivo <code>VPN_$USERNAME.ovpn</code></li>
         <li>Instala el cliente OpenVPN:
             <ul>
                 <li>Windows/Mac: <a href="https://openvpn.net/client/">OpenVPN Connect</a></li>
