@@ -259,82 +259,77 @@ log_info "Configurando SELinux en modo permissive..."
 setenforce 0 2>/dev/null || true
 sed -i 's/^SELINUX=enforcing/SELINUX=permissive/' /etc/selinux/config
 
-log_info "Configurando firewall (iptables)..."
+log_info "Configurando firewall (nftables)..."
+
+# Detener y deshabilitar firewalld e iptables
 systemctl stop firewalld 2>/dev/null || true
 systemctl disable firewalld 2>/dev/null || true
 systemctl mask firewalld 2>/dev/null || true
+systemctl stop iptables ip6tables 2>/dev/null || true
+systemctl disable iptables ip6tables 2>/dev/null || true
 
-systemctl enable iptables ip6tables
+# Habilitar nftables
+systemctl enable nftables
 
-# Limpiar reglas
-iptables -F
-iptables -X
-iptables -t nat -F
-ip6tables -F
-ip6tables -X
+# Limpiar configuración anterior
+nft flush ruleset
 
-# Políticas por defecto
-iptables -P INPUT DROP
-iptables -P FORWARD DROP
-iptables -P OUTPUT ACCEPT
+# Crear tabla principal
+nft add table inet filter
+
+# Crear cadenas base
+nft add chain inet filter input { type filter hook input priority 0 \; policy drop \; }
+nft add chain inet filter forward { type filter hook forward priority 0 \; policy drop \; }
+nft add chain inet filter output { type filter hook output priority 0 \; policy accept \; }
 
 # Loopback
-iptables -A INPUT -i lo -j ACCEPT
-iptables -A INPUT ! -i lo -d 127.0.0.0/8 -j REJECT
+nft add rule inet filter input iif lo accept
+nft add rule inet filter input iif != lo ip daddr 127.0.0.0/8 reject
+nft add rule inet filter input iif != lo ip6 daddr ::1 reject
 
 # Estados establecidos
-iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+nft add rule inet filter input ct state established,related accept
 
 # HTTP/HTTPS
-iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+nft add rule inet filter input tcp dport { 80, 443 } accept
 
 # Email
-for port in 25 465 587 110 995 143 993; do
-    iptables -A INPUT -p tcp -m tcp --dport $port -j ACCEPT
-done
+nft add rule inet filter input tcp dport { 25, 465, 587, 110, 995, 143, 993 } accept
 
-# SSH en puerto custom
-iptables -A INPUT -p tcp -m tcp --dport 12999 -j ACCEPT
+# SSH puerto custom
+nft add rule inet filter input tcp dport 12999 accept
 
 # OpenVPN
-iptables -A INPUT -p udp -m udp --dport 1194 -j ACCEPT
-iptables -A INPUT -i tun0 -j ACCEPT
+nft add rule inet filter input udp dport 1194 accept
+nft add rule inet filter input iifname "tun0" accept
 
 # TURN/STUN
-iptables -A INPUT -p udp -m udp --dport 3478:3479 -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 3478:3479 -j ACCEPT
-iptables -A INPUT -p udp -m udp --dport 49152:65535 -j ACCEPT
+nft add rule inet filter input udp dport 3478-3479 accept
+nft add rule inet filter input tcp dport 3478-3479 accept
+nft add rule inet filter input udp dport 49152-65535 accept
 
 # Matrix federation
-iptables -A INPUT -p tcp -m tcp --dport 8448 -j ACCEPT
+nft add rule inet filter input tcp dport 8448 accept
 
-# ICMP
-iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+# ICMP (v4 y v6)
+nft add rule inet filter input ip protocol icmp icmp type echo-request accept
+nft add rule inet filter input ip6 nexthdr icmpv6 accept
 
 # FORWARD para VPN
-iptables -A FORWARD -i tun0 -j ACCEPT
-iptables -A FORWARD -i tun0 -o "$INTERFACE" -j ACCEPT
-iptables -A FORWARD -i "$INTERFACE" -o tun0 -j ACCEPT
+nft add rule inet filter forward iifname "tun0" accept
+nft add rule inet filter forward iifname "tun0" oifname "$INTERFACE" accept
+nft add rule inet filter forward iifname "$INTERFACE" oifname "tun0" accept
 
-# NAT para VPN
-iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o "$INTERFACE" -j MASQUERADE
+# Tabla NAT para VPN
+nft add table ip nat
+nft add chain ip nat postrouting { type nat hook postrouting priority 100 \; }
+nft add rule ip nat postrouting ip saddr 10.8.0.0/24 oifname "$INTERFACE" masquerade
 
-# IPv6 básico
-ip6tables -A INPUT -i lo -j ACCEPT
-ip6tables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-ip6tables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
-ip6tables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
-ip6tables -A INPUT -p tcp -m tcp --dport 12999 -j ACCEPT
-ip6tables -A INPUT -p ipv6-icmp -j ACCEPT
-ip6tables -P INPUT DROP
-ip6tables -P FORWARD DROP
+# Guardar configuración
+nft list ruleset > /etc/nftables.conf
 
-# Guardar reglas
-iptables-save > /etc/sysconfig/iptables
-ip6tables-save > /etc/sysconfig/ip6tables
-
-systemctl start iptables ip6tables
+# Iniciar servicio
+systemctl start nftables
 
 log_info "Habilitando IP forwarding..."
 echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
