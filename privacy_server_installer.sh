@@ -694,8 +694,13 @@ disable_vrfy_command = yes
 mailbox_command = /usr/bin/procmail -a "\$EXTENSION"
 message_size_limit = 204800000
 mailbox_size_limit = 0
+default_database_type = lmdb
+alias_maps = lmdb:/etc/aliases
+alias_database = lmdb:/etc/aliases
 
 EOMAIN
+
+postalias lmdb:/etc/aliases
 
 openssl dhparam -out /etc/postfix/dhparams.pem 4096
 
