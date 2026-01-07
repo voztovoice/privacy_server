@@ -255,19 +255,6 @@ cat >> /etc/hosts << EOHOSTS
 $PRIMARY_IP $DOMAIN mail.$DOMAIN cloud.$DOMAIN vpn.$DOMAIN stun.$DOMAIN
 EOHOSTS
 
-log_info "Configurando red estática..."
-nmcli con delete public-net 2>/dev/null || true
-nmcli con add con-name public-net \
-    ifname "$INTERFACE" \
-    type ethernet \
-    ipv4.method 'manual' \
-    ipv4.addresses "$PRIMARY_IP/24" \
-    ipv4.gateway "$(echo $PRIMARY_IP | cut -d. -f1-3).1" \
-    ipv4.dns "8.8.8.8,8.8.4.4" \
-    ipv6.method 'auto'
-
-nmcli con up public-net
-
 log_info "Configurando SELinux en modo permissive..."
 setenforce 0 2>/dev/null || true
 sed -i 's/^SELINUX=enforcing/SELINUX=permissive/' /etc/selinux/config
