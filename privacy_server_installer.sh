@@ -701,7 +701,7 @@ alias_database = lmdb:/etc/aliases
 EOMAIN
 
 postalias lmdb:/etc/aliases
-
+echo "submission inet n       -       n       -       -       smtpd" >> /etc/postfix/master.cf
 openssl dhparam -out /etc/postfix/dhparams.pem 4096
 
 gpasswd -a postfix opendkim
