@@ -237,7 +237,7 @@ dnf update -y
 log_info "Instalando paquetes base..."
 dnf install -y \
     nano wget git curl \
-    chrony nftables \
+    chrony nftables epel-release \
     iptables-services \
     policycoreutils-python-utils \
     openssl tar unzip sqlite \
