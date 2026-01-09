@@ -326,7 +326,7 @@ nft add chain ip nat postrouting { type nat hook postrouting priority 100 \; }
 nft add rule ip nat postrouting ip saddr 10.8.0.0/24 oifname "$INTERFACE" masquerade
 
 # Guardar configuración
-nft list ruleset > /etc/nftables.conf
+nft list ruleset > /etc/sysconfig/nftables.conf
 
 # Iniciar servicio
 systemctl start nftables
