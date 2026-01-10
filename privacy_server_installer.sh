@@ -1297,6 +1297,7 @@ cat << EOHTML
     <h2 style="color: #e74c3c; margin-top: 30px;">🔐 Contraseña Maestra</h2>
     <div style="background: #ffe6e6; padding: 15px; border-left: 4px solid #e74c3c; font-family: monospace; font-size: 16px;">
         <strong>$MASTER_PASSWORD</strong>
+        <strong>Usuario: admin</strong>
     </div>
     <p style="color: #666; font-size: 14px;">Esta contraseña se usa para MySQL, Nextcloud y Matrix.</p>
     
@@ -1318,7 +1319,7 @@ cat << EOHTML
     <ol style="line-height: 2; background: #fff3cd; padding: 20px; border-radius: 5px;">
         <li><strong>Configurar DNS:</strong> Revisar archivo de credenciales para registros completos</li>
         <li><strong>Agregar clave DKIM</strong> al DNS</li>
-        <li><strong>Probar SSH</strong> en puerto 12999 antes de cerrar sesión actual</li>
+        <li><strong>Probar SSH</strong> en puerto 12999 antes de cerrar sesión actual. Si el acceso no funciona: systemctl restart sshd e intentar nuevamente</li>
         <li><strong>Crear primer usuario</strong> con create_user.sh</li>
     </ol>
     
