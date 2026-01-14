@@ -71,9 +71,7 @@ git clone https://github.com/voztovoice/privacy_server.git
 cd privacy_server
 
 # Hacer ejecutables
-chmod +x privacy_server_installer.sh
-chmod +x create_user.sh
-chmod +x delete_user.sh
+chmod +x privacy_server_installer.sh create_user.sh delete_user.sh
 ```
 
 ### Paso 3: Ejecutar Instalación
